@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
+</head>
+<body>
+
+        <section class="hero is-fullheight is-light-grey is-bold">
+                <div class="container">
+                        <div class="animated preFadeInLeft fadeInLeft">
+                            <div class="box">
+                                    <form name  ="Pay" method="post" action="https://pay.piastrix.com/ru/pay" accept-charset="UTF-8">
+                                        <input type="hidden" name="amount" value="{{ dictionary.amount }}"/>
+                                        <input type="hidden" name="currency" value="{{ dictionary.currency }}"/>
+                                        <input type="hidden" name="shop_id" value="{{ dictionary.shop_id }}"/>
+                                        <input type="hidden" name="sign" value="{{ dictionary.sign }}"/>
+                                        <input type="hidden" name="shop_order_id" value="{{ dictionary.shop_order_id }}"/>
+                                        {% if  dictionary.description  %}
+                                            <input type="hidden" name="description" value="{{ dictionary.description }}"/>
+                                        {% endif %}
+                                        <button class="button is-success is-rounded">Подтвердить</button>
+                                    </form>
+                            </div>
+                        </div>
+                </div>
+        </section>
+
+
+</body>
+</html>
