@@ -33,11 +33,8 @@ def data():
                 'shop_order_id': invoice.id,
                 'description': description,
             }
-            print(invoice.id)
 
-            cipher_string = ":".join([str(x[1]) for x in sorted(dictionary.items())]) + 'SecretKey01'
-
-            sign = hashlib.sha256(bytes(cipher_string, "utf-8")).hexdigest()
+            sign = cipher(dictionary)
 
             dictionary.update({'sign': sign})
 
@@ -53,9 +50,7 @@ def data():
                 'shop_id ': shop_id
             }
 
-            cipher_string = ":".join([str(x[1]) for x in sorted(dictionary.items())]) + 'SecretKey01'
-
-            sign = hashlib.sha256(bytes(cipher_string, "utf-8")).hexdigest()
+            sign = cipher(dictionary)
 
             response = requests.post('https://core.piastrix.com/bill/create',
                                      json={
@@ -66,9 +61,10 @@ def data():
                                         "shop_id": shop_id,
                                         "shop_order_id": invoice.id,
                                         "sign": sign,
-                                     })
+                                     }, timeout=1)
 
-            return redirect(response.json()['data']['url'], code=302)
+            return redirect(response.json()['data']['url'], code=302) if response.status_code == 200 else\
+                Response(status=201)
 
         elif dict(request.form).get('payment_currency') == 'RUB':
 
@@ -80,9 +76,7 @@ def data():
                 'shop_order_id': invoice.id
             }
 
-            cipher_string = ":".join([str(x[1]) for x in sorted(dictionary.items())]) + 'SecretKey01'
-
-            sign = hashlib.sha256(bytes(cipher_string, "utf-8")).hexdigest()
+            sign = cipher(dictionary)
 
             response = requests.post('https://core.piastrix.com/invoice/create',
                                      json={
@@ -93,8 +87,16 @@ def data():
                                          "shop_id": shop_id,
                                          "shop_order_id": invoice.id,
                                          "description": description,
-                                     })
+                                     }, timeout=1)
 
             return render_template('RUB.html', data=response.json()['data'])
 
     return render_template('base.html')
+
+
+def cipher(dictionary):
+
+    cipher_string = ":".join([str(x[1]) for x in sorted(dictionary.items())]) + 'SecretKey01'
+    sign = hashlib.sha256(bytes(cipher_string, "utf-8")).hexdigest()
+
+    return sign
